@@ -24,27 +24,51 @@ class HomeScreenState extends State<HomeScreen> {
   String? _otherPurposeText;
 
   final List<String> _locations = [
-    'Boys Hostel',
-    'Girls Hostel',
-    'Sunflower Block',
-    'Mechanical Block',
-    'As Block',
+    'Gate A',
+    'Gate C',
+    'AS Block',
     'IB Block',
     'Cafeteria',
-    'BIT Main Auditorium',
     'Aero Block',
-    'Gate A',
-    'Learning Centre',
+    'Main Ground',
+    'Boys Hostel',
+    'Girls Hostel',
     'Medical Centre',
-    'Gate C',
     'Badminton Court',
-    'Main Ground'
+    'Learning Centre',
+    'Sunflower Block',
+    'Mechanical Block',
+    'BIT Main Auditorium'
   ];
+
+  final Map<String, List<String>> _purposesByDesignation = {
+    'Student': [
+      'Going home',
+      'Medical Center',
+      'Other'],
+    'Faculty': [
+      'Lecture',
+      'Meeting',
+      'DC Rounds',
+      'Guest Transport',
+      'Other'],
+    'Technician': ['Other'],
+  };
+
 
   @override
   void initState() {
     super.initState();
     _user = FirebaseAuth.instance.currentUser;
+  }
+
+  bool _isFormValid() {
+    return _selectedLocation != null &&
+        _selectedDestination != null &&
+        _selectedDesignation != null &&
+        _selectedLuggageStatus != null &&
+        _selectedPurpose != null &&
+        (_selectedPurpose != 'Other' || _otherPurposeText != null);
   }
 
   void _submitDetails() async {
@@ -206,7 +230,6 @@ class HomeScreenState extends State<HomeScreen> {
                         onChanged: (newValue) {
                           setState(() {
                             _selectedLocation = newValue;
-                            _selectedDestination = null;
                           });
                         },
                       ),
@@ -289,32 +312,32 @@ class HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                       const SizedBox(height: 20),
-
-                      if (_selectedLuggageStatus == 'No') ...[
-                        // Purpose Dropdown
-                        DropdownButtonFormField<String>(
-                          value: _selectedPurpose,
-                          decoration: InputDecoration(
-                            labelText: 'Purpose',
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                       // Purpose Dropdown
+                      DropdownButtonFormField<String>(
+                        value: _selectedPurpose,
+                        decoration: InputDecoration(
+                          labelText: 'Purpose',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          items: <String>['Meeting', '.', '.', 'Other']
-                              .map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (newValue) {
-                            setState(() {
-                              _selectedPurpose = newValue;
-                            });
-                          },
                         ),
+                        items: (_selectedDesignation != null
+                            ? _purposesByDesignation[_selectedDesignation]
+                            : ['Other'])
+                            ?.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedPurpose = newValue;
+                          });
+                        },
+                      ),
                         const SizedBox(height: 20),
 
                         // Other Purpose Text Field
@@ -335,7 +358,6 @@ class HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                           const SizedBox(height: 20),
-                        ],
                       ],
 
                       // Submit Button with Ripple Effect
@@ -349,7 +371,9 @@ class HomeScreenState extends State<HomeScreen> {
                           backgroundColor: Colors.deepPurple,
                           foregroundColor: Colors.white, 
                         ),
-                        onPressed: _submitDetails,
+                        onPressed: _isFormValid() ? () {
+                          _submitDetails();
+                        } : null,
                         child: const Text('Submit'),
                       ),
                     ],
