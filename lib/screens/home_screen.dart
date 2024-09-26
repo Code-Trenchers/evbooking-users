@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:login_page/screens/login_screen.dart';
+import 'package:login_page/services/database_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> {
   final String serverKey = "";
   User? _user;
+  final DatabaseService _databaseService = DatabaseService();
 
   // Variables to store dropdown selections
   String? _selectedLocation;
@@ -47,33 +49,20 @@ class HomeScreenState extends State<HomeScreen> {
     _user = FirebaseAuth.instance.currentUser;
   }
 
-  Future<void> sendMessage() async {
-    const postUrl = 'https://fcm.googleapis.com/fcm/send';
-    final data = {
-      "to": "RECEIVER_DEVICE_TOKEN",
-      "notification": {
-        "title": "Message from App 1",
-        "body": "Hello from another app!",
-        "sound": "default",
-      },
-      "data": {
-        "click_action": "FLUTTER_NOTIFICATION_CLICK",
-        "message": "This is a message from App 1"
-      }
-    };
+  void _submitDetails() async {
+    if (_user != null) {
+      String purpose = _selectedPurpose == 'Other' ? _otherPurposeText ?? 'Unknown' : _selectedPurpose ?? 'Unknown';
 
-    final headers = {
-      'content-type': 'application/json',
-      'Authorization': 'key=$serverKey',
-    };
-
-    final response = await http.post(
-      Uri.parse(postUrl),
-      body: json.encode(data),
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
+      await _databaseService.createBooking(
+        _user!.uid,
+        _user!.displayName ?? 'Unknown',
+        _user!.email ?? 'Unknown',
+        _selectedLocation ?? 'Unknown',
+        _selectedDestination ?? 'Unknown',
+        _selectedDesignation ?? 'Unknown',
+        _selectedLuggageStatus ?? 'Unknown',
+        purpose,
+      );
       print('Message sent successfully');
     } else {
       print('Failed to send message');
@@ -292,7 +281,6 @@ class HomeScreenState extends State<HomeScreen> {
                           onChanged: (newValue) {
                             setState(() {
                               _selectedPurpose = newValue;
-                              _otherPurposeText = null;
                             });
                           },
                         ),
@@ -328,11 +316,9 @@ class HomeScreenState extends State<HomeScreen> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                           backgroundColor: Colors.deepPurple,
-                          foregroundColor: Colors.white, // Correct parameter
+                          foregroundColor: Colors.white, 
                         ),
-                        onPressed: () {
-                          // Handle form submission here
-                        },
+                        onPressed: _submitDetails,
                         child: const Text('Submit'),
                       ),
                     ],
