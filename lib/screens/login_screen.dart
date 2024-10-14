@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await _googleSignIn.signOut();
         if (!mounted) return;
         setState(() {
-          _errorMessage = 'Sign in restricted to Bitsathy gmail';
+          _errorMessage = 'Sign in restricted to Bitsathy domain';
         });
       }
     } on FirebaseAuthException catch (e) {
@@ -88,6 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _navigateToHomePage() {
+    _googleSignIn.signOut();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const HomeScreen()),
