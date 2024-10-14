@@ -1,6 +1,6 @@
 {
-    "name": "login_page",
-    "short_name": "login_page",
+    "name": "evBookingUser",
+    "short_name": "evBookingUser",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
