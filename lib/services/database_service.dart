@@ -1,10 +1,51 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
+  Future<void> cancelRequest(String uId) async {
+    // Fetch the last booking document
+    QuerySnapshot snapshot = await _db
+        .collection('bookings')
+        .where('uId', isEqualTo: uId)
+        .orderBy('createdAt', descending: true)
+        .limit(1)
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      DocumentSnapshot lastRequest = snapshot.docs.first;
+      await lastRequest.reference.update({'status': 'cancelled'});
+    }
+  }
+
+  Stream<Map<String, dynamic>?> streamLastRequestStatus(String uId) {
+    return _db
+        .collection('bookings')
+        .where('uId', isEqualTo: uId)
+        .orderBy('createdAt', descending: true)
+        .limit(1)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        final doc = snapshot.docs.first;
+        return {
+          'status': doc['status'] as String?,
+          'requestId': doc.id,
+        };
+      }
+      return null;
+    });
+  }
+
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // Create a booking
-  Future<void> createBooking(String uId, String uName, String uEmail, String currentLocation, String destination, String designation, String luggage, String purpose) async {
+  Future<void> createRequest(
+      String uId,
+      String uName,
+      String uEmail,
+      String currentLocation,
+      String destination,
+      String designation,
+      String luggage,
+      String purpose) async {
     await _db.collection('bookings').add({
       'uId': uId,
       'uName': uName,
