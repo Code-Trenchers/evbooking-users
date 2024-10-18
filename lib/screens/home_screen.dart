@@ -366,6 +366,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 onChanged: (newValue) {
                                   setState(() {
                                     _selectedDesignation = newValue;
+                                    _selectedPurpose = null;
                                   });
                                 },
                               ),
