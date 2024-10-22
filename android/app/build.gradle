@@ -13,16 +13,12 @@ android {
     compileSdk 34
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-
-    buildFeatures {
-        buildConfig true
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_21
+        jvmTarget = JavaVersion.VERSION_17
     }
 
     defaultConfig {
@@ -43,7 +39,6 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
-    buildToolsVersion '35.0.0'
 }
 
 flutter {
