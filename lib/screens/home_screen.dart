@@ -47,6 +47,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   final List<String> _locations = [
     'Gate A',
+    'Gate B',
     'Gate C',
     'AS Block',
     'IB Block',
@@ -55,12 +56,16 @@ class HomeScreenState extends State<HomeScreen> {
     'Main Ground',
     'Boys Hostel',
     'Girls Hostel',
+    'Main Parking',
+    'South Parking',
     'Medical Centre',
+    'Staff Quarters',
     'Badminton Court',
     'Learning Centre',
     'Sunflower Block',
     'Mechanical Block',
-    'BIT Main Auditorium'
+    'BIT Main Auditorium',
+    'Indoor Badminton Court',
   ];
 
   final Map<String, List<String>> _purposesByDesignation = {
@@ -254,8 +259,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                              if (requestStatus == 'pending' ||
-                                  requestStatus == 'approved')
+                              if (requestStatus == 'pending')
                                 Padding(
                                   padding: const EdgeInsets.only(top: 10),
                                   child: ElevatedButton(
