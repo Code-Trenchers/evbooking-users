@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.codeTrenchers.evBookingUser">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
         android:label="EV Booking"
         android:name="${applicationName}"
