@@ -35,6 +35,26 @@ class DatabaseService {
     });
   }
 
+  Future<String> getVehicleNumber(String documentId) async {
+    try {
+      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+          .collection('bookings')
+          .doc(documentId)
+          .get();
+
+      if (docSnapshot.exists) {
+        String vehicleNumber = docSnapshot.get('vehicleNumber');
+        return vehicleNumber;
+      } else {
+        print('Error document does not exist');
+        return 'Error';
+      }
+    } catch (e) {
+      print('Error getting document: $e');
+      return 'Error';
+    }
+  }
+
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   Future<void> createRequest(
