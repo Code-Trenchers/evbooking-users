@@ -45,6 +45,8 @@ class HomeScreenState extends State<HomeScreen> {
   String? _selectedPurpose;
   String? _otherPurposeText;
 
+  String? _vehicleNumber;
+
   final List<String> _locations = [
     'Gate A',
     'Gate B',
@@ -168,7 +170,16 @@ class HomeScreenState extends State<HomeScreen> {
         final requestData = snapshot.data;
         final requestStatus =
             requestData?['status'] ?? 'No recent request found';
+        final requestId = requestData?['requestId'];
         final canSubmit = requestStatus != 'pending';
+
+        if (requestStatus == 'approved' && requestId != null) {
+          _databaseService.getVehicleNumber(requestId).then((vehicleNumber) {
+            setState(() {
+              _vehicleNumber = vehicleNumber;
+            });
+          });
+        }
 
         // Add cancel button logic
         if (requestStatus == 'pending' || requestStatus == 'approved') {
@@ -266,7 +277,20 @@ class HomeScreenState extends State<HomeScreen> {
                                     onPressed: () => cancelRequest(),
                                     child: const Text('Cancel Request'),
                                   ),
-                                )
+                                ),
+                              if (requestStatus == 'approved')
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: Text(
+                                    'Vehicle Number: ${_vehicleNumber ?? 'Loading...'}',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
                             ],
                           ),
                         ),
