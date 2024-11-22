@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class DatabaseService {
   Future<void> cancelRequest(String uId) async {
@@ -46,11 +47,12 @@ class DatabaseService {
         String vehicleNumber = docSnapshot.get('vehicleNumber');
         return vehicleNumber;
       } else {
-        print('Error document does not exist');
         return 'Error';
       }
     } catch (e) {
-      print('Error getting document: $e');
+      if (kDebugMode) {
+        print(e.toString());
+      }
       return 'Error';
     }
   }
